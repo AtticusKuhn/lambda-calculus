@@ -41,21 +41,6 @@ prog_to_lc (Program mydefs mymainDef) = foldr  fold_prog_to_lc mymainDef  mydefs
 fold_prog_to_lc :: (String, LC) ->   LC  -> LC
 fold_prog_to_lc  (name, def) main = App (Lambda name (main)) (def)
 
---evaluate_lc :: LC -> LC
---evaluate_lc (App x y) = case ex of
---                          Lambda var body -> evaluate_lc $ replace_lc var body ey
---                          other -> App other ey
---  where
---    ex  = evaluate_lc x
---    ey = evaluate_lc y
---evaluate_lc (Lambda varname body) = Lambda varname (evaluate_lc body)
---evaluate_lc x = x
-
---replace_lc :: String -> LC -> LC -> LC
---replace_lc varname (Var x) rest = if x == varname then rest else (Var x)
---replace_lc varname (App x y) rest = App (replace_lc varname x rest) (replace_lc varname y rest)
---replace_lc varname (Lambda l body) rest =  if l == varname then (Lambda l body) else (Lambda l (replace_lc varname body rest))
-
 lc_to_lcn :: LC -> LCN
 lc_to_lcn  = lc_to_lcn_aux []
 
@@ -63,16 +48,6 @@ lc_to_lcn_aux :: [String] -> LC -> LCN
 lc_to_lcn_aux names (Var s) = Vr $ fromMaybe 1000 $ elemIndex s names
 lc_to_lcn_aux names (App f x) = Ap (lc_to_lcn_aux names f) (lc_to_lcn_aux names x)
 lc_to_lcn_aux names (Lambda var body) = Lam (lc_to_lcn_aux (var : names) body)
-
-eval_lcn :: LCN -> LCN
-eval_lcn (Ap a b) = case ea of
-  Lam body -> eval_lcn $ beta_reduction body b 0
-  other -> Ap other eb
-  where
-    ea = eval_lcn a
-    eb = eval_lcn b
-eval_lcn (Lam body) = Lam $ eval_lcn body
-eval_lcn x = x
 
 eval :: LCN -> LCN
 eval (Ap fun arg) = case eval fun of
