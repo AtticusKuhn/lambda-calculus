@@ -1,0 +1,10 @@
+True t f = t
+False t f = f
+0 = λz λs z
+Succ n = λz λs .s n
+1 = .Succ 0
+Y f = .λx .f .x x λx .f .x x
+AddRec rec n1 n2 = ..n1 n2 λs .Succ ..rec s n2
+Add = .Y AddRec
+IsZero n = ..n True .True False
+.IsZero ..Add 0 0
